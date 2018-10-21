@@ -3,4 +3,7 @@ name = "guessing_game"
 version = "0.1.0"
 authors = ["hafizputrafairyhunter13 <fairyhunter13.fairyhunter13@tokopedia.com>"]
 
+
 [dependencies]
+
+rand = "0.3.14"

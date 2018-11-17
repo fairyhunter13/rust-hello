@@ -4,6 +4,14 @@ pub mod client;
 // }
 pub mod network;
 
+pub mod a {
+    pub mod series {
+        pub mod of {
+            pub fn nested_modules() {}
+        }
+    }
+}
+
 mod outermost {
     pub fn middle_function() {}
 
@@ -18,15 +26,17 @@ mod outermost {
 
 fn try_me() {
     outermost::middle_function();
-    outermost::middle_secret_function();
-    outermost::inside::inner_function();
-    outermost::inside::secret_function();
+    // outermost::middle_secret_function();
+    // outermost::inside::inner_function();
+    // outermost::inside::secret_function();
 }
 
 #[cfg(test)]
 mod tests {
+    use super::client;
     #[test]
     fn it_works() {
-        assert_eq!(2 + 2, 4);
+        // assert_eq!(2 + 2, 4);
+        client::connect();
     }
 }

@@ -29,8 +29,22 @@ impl<T, U> Point<T, U> {
     }
 }
 
+// trait Summary {
+//     fn summarize(&self) -> String;
+// }
+
+// trait Summary {
+//     fn summarize_author(&self) -> String {};
+//     fn summarize(&self) -> String {
+//         "Read more...".to_owned()
+//     }
+// }
+
 trait Summary {
-    fn summarize(&self) -> String;
+    fn summarize_author(&self) -> String;
+    fn summarize(&self) -> String {
+        format!("Read more from {}.", self.summarize_author())
+    }
 }
 
 struct NewsArticle {
@@ -41,6 +55,10 @@ struct NewsArticle {
 }
 
 impl Summary for NewsArticle {
+    fn summarize_author(&self) -> String {
+        format!("Test Summarize Author")
+    }
+
     fn summarize(&self) -> String {
         format!("{}, by {} ({})", self.headline, self.author, self.location)
     }
@@ -49,14 +67,18 @@ impl Summary for NewsArticle {
 struct Tweet {
     username: String,
     content: String,
-    reply: String,
-    retweet: String,
+    reply: bool,
+    retweet: bool,
 }
 
 impl Summary for Tweet {
-    fn summarize(&self) -> String {
-        format!("{}: {}", self.username, self.content)
+    fn summarize_author(&self) -> String {
+        format!("@{}", self.username)
     }
+
+    // fn summarize(&self) -> String {
+    //     format!("{}: {}", self.username, self.content)
+    // }
 }
 
 fn main() {
@@ -99,6 +121,33 @@ fn main() {
     let p3 = p1.mixup(p2);
 
     println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+
+    let tweet = Tweet {
+        username: "horse".to_owned(),
+        content: "This is tweet from horse".to_owned(),
+        reply: false,
+        retweet: false,
+    };
+
+    println!("This is the summarize of tweet: {}", tweet.summarize());
+
+    let article = NewsArticle {
+        headline: "Penguins wins the cup!".to_owned(),
+        location: "Indonesia".to_owned(),
+        author: "Iceburgh".to_owned(),
+        content: "The Pittsburg Penguins are the best!".to_owned(),
+    };
+
+    println!("This is the new article: {}", article.summarize());
+
+    let tweet = Tweet {
+        username: String::from("horse_ebooks"),
+        content: String::from("of course, as you probably already know, people"),
+        reply: false,
+        retweet: false,
+    };
+
+    println!("1 new tweet: {}", tweet.summarize());
 }
 
 fn largest(list: &[i32]) -> i32 {

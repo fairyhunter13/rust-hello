@@ -1,7 +1,34 @@
+use std::fmt::{Debug, Display};
+
 struct Point<T, U> {
     x: T,
     y: U,
 }
+
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest member is y = {}", self.y);
+        }
+    }
+}
+
+// impl<T: Display> ToString for T {
+//     // --snip--
+// }
 
 // struct Point<T> {
 //     x: T,
@@ -76,9 +103,98 @@ impl Summary for Tweet {
         format!("@{}", self.username)
     }
 
-    // fn summarize(&self) -> String {
-    //     format!("{}: {}", self.username, self.content)
-    // }
+    fn summarize(&self) -> String {
+        format!("{}: {}", self.username, self.content)
+    }
+}
+
+// fn notiify(item: impl Summary) {
+//     println!("Item implementing Summary: {}", item.summarize());
+// }
+
+fn notify<T: Summary>(item: T) {
+    println!("Breaking news! {}", item.summarize());
+}
+
+// fn some_function<T: Display + Clone, U: Clone + Debug>(t: T, u: U) -> i32 {
+//     0
+// }
+
+fn some_function<T, U>(t: T, u: U) -> i32
+where
+    T: Display + Clone,
+    U: Clone + Debug,
+{
+    0
+}
+
+// fn returns_summarizable() -> impl Summary {
+//     Tweet {
+//         username: "horse_ebooks".to_owned(),
+//         content: "of course, you know.".to_owned(),
+//         reply: false,
+//         retweet: false,
+//     }
+// }
+
+fn returns_summarizable() -> impl Summary
+// where
+//     T: Summary,
+{
+    Tweet {
+        username: "horse_ebooks".to_owned(),
+        content: "of course, you know.".to_owned(),
+        reply: false,
+        retweet: false,
+    }
+}
+
+// fn returns_summarizable(switch: bool) -> impl Summary {
+//     if switch {
+//         NewsArticle {
+//             headline: String::from("Penguins win the Stanley Cup Championship!"),
+//             location: String::from("Pittsburgh, PA, USA"),
+//             author: String::from("Iceburgh"),
+//             content: String::from(
+//                 "The Pittsburgh Penguins once again are the best
+//             hockey team in the NHL.",
+//             ),
+//         }
+//     } else {
+//         Tweet {
+//             username: String::from("horse_ebooks"),
+//             content: String::from("of course, as you probably already know, people"),
+//             reply: false,
+//             retweet: false,
+//         }
+//     }
+// }
+
+struct ImportantExcerpt<'a> {
+    part: &'a str,
+}
+
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        3
+    }
+
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        println!("Attention please: {}", announcement);
+        self.part
+    }
+}
+
+fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str
+where
+    T: Display,
+{
+    println!("Announcement! {}", ann);
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
 }
 
 fn main() {
@@ -148,18 +264,83 @@ fn main() {
     };
 
     println!("1 new tweet: {}", tweet.summarize());
-}
 
-fn largest(list: &[i32]) -> i32 {
-    let mut largest = list[0];
+    let s = 3.to_string();
 
-    for &number in list.iter() {
-        if number > largest {
-            largest = number;
-        }
+    // Invalid Example
+    // let r;
+
+    // {
+    //     let x = 5;
+    //     r = &x;
+    // }
+
+    // println!("r: {}", r);
+
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+
+    let result = longest(string1.as_str(), string2);
+
+    println!("The longest string is {}", result);
+
+    // Valid Example
+    let string1 = String::from("long string is long");
+
+    {
+        let string2 = String::from("xyz");
+        let result = longest(string1.as_str(), string2.as_str());
+        println!("The longest string is {}", result);
     }
-    largest
+
+    // Invalid generic lifetime parameters example.
+    // Generic lifetime 'a must be smaller than lifetime x and y.
+    // let string1 = String::from("long string is long");
+    // let result;
+    // {
+    //     let string2 = String::from("xyz");
+    //     result = longest(string1.as_str(), string2.as_str());
+    // }
+    // println!("The longest string is {}", result);
+
+    let novel = String::from("Call me Hafiz. Ten years ago...");
+
+    let first_sentence = novel.split(".").next().expect("Couldn't find a '.'");
+
+    let i = ImportantExcerpt {
+        part: first_sentence,
+    };
+
+    let s: &'static str = "I have a static lifetime.";
 }
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+// fn longest<'a>(x: &'a str, y: &str) -> &'a str {
+//     x
+// }
+
+// fn longest<'a>(x: &str, y: &str) -> &'a str {
+//     let result = String::from("really long string");
+//     result.as_str()
+// }
+
+// fn largest(list: &[i32]) -> i32 {
+//     let mut largest = list[0];
+
+//     for &number in list.iter() {
+//         if number > largest {
+//             largest = number;
+//         }
+//     }
+//     largest
+// }
 
 fn largest_i32(list: &[i32]) -> i32 {
     let mut largest = list[0];
@@ -185,14 +366,16 @@ fn largest_char(list: &[char]) -> char {
     largest
 }
 
-// fn largest<T>(list: &[T]) -> T {
-//     let mut largest = list[0];
+fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
+    let mut largest = list[0];
 
-//     for &item in list.into_iter() {
-//         if item > largest {
-//             largest = item;
-//         }
-//     }
+    {
+        for &item in list.into_iter() {
+            if item > largest {
+                largest = item;
+            }
+        }
+    }
 
-//     largest
-// }
+    largest
+}

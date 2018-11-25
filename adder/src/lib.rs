@@ -40,6 +40,11 @@ impl Guess {
     }
 }
 
+pub fn print_and_returns(num: i32) -> i32 {
+    println!("I got the value {}", num);
+    10
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,1 +1,0 @@
-D:\Git\Gitlab\rust-hello\communicator\target\debug\communicator-99cea8e2b6b8df7c.exe: D:\Git\Gitlab\rust-hello\communicator\src\client.rs D:\Git\Gitlab\rust-hello\communicator\src\lib.rs D:\Git\Gitlab\rust-hello\communicator\src\network\mod.rs D:\Git\Gitlab\rust-hello\communicator\src\network\server.rs

@@ -1,0 +1,1 @@
+d:\Git\Gitlab\hafizfairyhunter1313\rust-hello\minigrep\target\rls\debug\libminigrep.rmeta: d:\Git\Gitlab\hafizfairyhunter1313\rust-hello\minigrep\src\lib.rs d:\Git\Gitlab\hafizfairyhunter1313\rust-hello\minigrep\src\main.rs

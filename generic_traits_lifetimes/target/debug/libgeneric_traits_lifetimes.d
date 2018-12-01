@@ -1,1 +1,0 @@
-D:\Git\Gitlab\hafizfairyhunter1313\rust-hello\generic_traits_lifetimes\target\debug\libgeneric_traits_lifetimes.rmeta: D:\Git\Gitlab\hafizfairyhunter1313\rust-hello\generic_traits_lifetimes\src\main.rs

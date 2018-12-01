@@ -1,1 +1,0 @@
-/home/nakama/git/gitlab.com/rust-hello/adder/target/debug/ok-da055821a02c458d: /home/nakama/git/gitlab.com/rust-hello/adder/src/lib.rs /home/nakama/git/gitlab.com/rust-hello/adder/tests/common/mod.rs /home/nakama/git/gitlab.com/rust-hello/adder/tests/ok.rs

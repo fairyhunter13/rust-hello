@@ -35,11 +35,34 @@ struct Shoe {
     style: String,
 }
 
-fn shoe_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
     shoes
         .into_iter()
         .filter(|shoe| shoe.size == shoe_size)
         .collect()
+}
+
+#[derive(Debug)]
+pub struct Counter {
+    count: u32,
+}
+
+impl Counter {
+    pub fn new() -> Counter {
+        Counter { count: 0 }
+    }
+}
+
+impl Iterator for Counter {
+    type Item = u32;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.count += 1;
+        if self.count < 6 {
+            Some(self.count)
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -63,6 +86,22 @@ mod tests {
                 style: "boot".to_owned(),
             },
         ];
+
+        let in_my_size = shoes_in_my_size(shoes, 10);
+
+        assert_eq!(
+            vec![
+                Shoe {
+                    size: 10,
+                    style: "sneaker".to_owned(),
+                },
+                Shoe {
+                    size: 10,
+                    style: "boot".to_owned(),
+                }
+            ],
+            in_my_size
+        )
     }
 
     #[test]
@@ -96,5 +135,31 @@ mod tests {
         let total: i32 = v1_iter.sum();
 
         assert_eq!(total, 6);
+    }
+
+    #[test]
+    fn calling_next_directly() {
+        let mut counter = Counter::new();
+
+        assert_eq!(counter.next(), Some(1));
+        assert_eq!(counter.next(), Some(2));
+        assert_eq!(counter.next(), Some(3));
+        assert_eq!(counter.next(), Some(4));
+        assert_eq!(counter.next(), Some(5));
+        assert_eq!(counter.next(), None);
+    }
+
+    #[test]
+    fn using_other_iterator_trait_methods() {
+        let sum: u32 = Counter::new()
+            .zip(Counter::new().skip(1))
+            .map(|(a, b)| {
+                println!("[Map] a: {} & b: {}", a, b);
+                a * b
+            }).filter(|elem| {
+                println!("[Filter] elem: {}", elem);
+                elem % 3 == 0
+            }).sum();
+        assert_eq!(sum, 18);
     }
 }

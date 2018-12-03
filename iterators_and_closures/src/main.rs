@@ -1,19 +1,19 @@
 extern crate iterators_and_closures;
 
-use iterators_and_closures::Cacher;
+use iterators_and_closures::{Cacher, Counter};
 use std::{thread, time::Duration};
 
 fn main() {
-    // println!("Hello, world!");
-    // let simulated_user_specified_value = 10;
-    // let simulated_random_number = 2;
+    println!("Hello, world!");
+    let simulated_user_specified_value = 10;
+    let simulated_random_number = 2;
 
-    // generate_workout(simulated_user_specified_value, simulated_random_number);
+    generate_workout(simulated_user_specified_value, simulated_random_number);
 
-    // let x = 4;
-    // let equal_to_x = |z| z == x;
-    // let y = 4;
-    // assert!(equal_to_x(y));
+    let x = 4;
+    let equal_to_x = |z| z == x;
+    let y = 4;
+    assert!(equal_to_x(y));
 
     let x = vec![1, 2, 3];
 
@@ -28,13 +28,17 @@ fn main() {
     let v1_iter = v1.iter();
 
     for val in v1_iter {
-        println!("Item: {}", val);
+        println!("item: {}", val);
     }
 
     let v1: Vec<u32> = vec![1, 2, 3];
     let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
 
     assert_eq!(v2, vec![2, 3, 4]);
+
+    for num in Counter::new().skip(1) {
+        println!("Test skip: {}", num);
+    }
 }
 
 // fn generate_workout(intensity: u32, random_number: u32) {

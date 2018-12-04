@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["hafizfairyhunter1313 <hafizfairyhunter1313@gmail.com>"]
 
 [dependencies]
+
+[profile.dev]
+opt-level=1

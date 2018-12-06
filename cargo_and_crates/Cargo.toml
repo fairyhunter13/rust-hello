@@ -1,7 +1,9 @@
 [package]
-name = "cargo_and_crates"
+name = "cargo_and_crates_fairyhunter13"
 version = "0.1.0"
-authors = ["hafizludyanto13 <hafizludyanto13@gmail.com>"]
+authors = ["fairyhunter13 <fairyhunter13@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Learning the features of cargo and crates in rust."
 
 [dependencies]
 

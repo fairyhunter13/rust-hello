@@ -1,4 +1,4 @@
-extern crate cargo_and_crates as art;
+extern crate cargo_and_crates_fairyhunter13 as art;
 
 // use art::kinds::PrimaryColor;
 // use art::utils::mix;

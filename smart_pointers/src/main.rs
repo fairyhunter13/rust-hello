@@ -22,6 +22,16 @@ impl<T> Deref for MyBox<T> {
     }
 }
 
+struct CustomSmartPointer {
+    data: String,
+}
+
+impl Drop for CustomSmartPointer {
+    fn drop(&mut self) {
+        println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+    }
+}
+
 fn main() {
     let b = Box::new(5);
     let k = *b + 1;
@@ -47,6 +57,29 @@ fn main() {
     // Deref coercien happens at compile time.
     let m = MyBox::new(String::from("Rust"));
     hello(&(*m)[..]);
+
+    let c = CustomSmartPointer {
+        data: String::from("my_stuff"),
+    };
+
+    let d = CustomSmartPointer {
+        data: String::from("other_stuff"),
+    };
+
+    println!("CustomSmartPointers created.");
+
+    let c = CustomSmartPointer {
+        data: String::from("some data"),
+    };
+
+    println!("CustomSmartPointer created!");
+
+    //Explicit destructor cannot be called directly.
+    // c.drop();
+
+    drop(c);
+
+    println!("CustomSmartPointer dropped before the end of main.");
 }
 
 fn hello(name: &str) {

@@ -56,9 +56,14 @@ mod tests {
 
     impl Messenger for MockMessenger {
         fn send(&self, messages: &str) {
-            self.sent_messages
-                .borrow_mut()
-                .push(String::from((messages)));
+            self.sent_messages.borrow_mut().push(messages.to_owned());
+
+            // Panic at runtime, be careful!
+            // let mut one_borrow = self.sent_messages.borrow_mut();
+            // let mut two_borrow = self.sent_messages.borrow_mut();
+
+            // one_borrow.push(String::from(messages));
+            // two_borrow.push(String::from(messages));
         }
     }
 

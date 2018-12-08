@@ -30,4 +30,14 @@ fn main() {
         println!("Hi, number {} from the main thread!", i);
         thread::sleep(Duration::from_millis(1));
     }
+
+    // Using move closures with threads.
+
+    let v = vec![1, 2, 3];
+
+    let handle = thread::spawn(move || {
+        println!("The vector is {:?}", v);
+    });
+
+    handle.join().unwrap();
 }

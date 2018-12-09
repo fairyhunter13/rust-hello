@@ -1,4 +1,8 @@
-use std::{sync::mpsc, thread, time::Duration};
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread,
+    time::Duration,
+};
 
 fn main() {
     // Wait second thread until finish before main thread exits.
@@ -113,4 +117,84 @@ fn main() {
     for received in rx {
         println!("Got [Multiple Producers]: {}", received);
     }
+
+    // Using mutual exclusion in rust.
+
+    let m = Mutex::new(5);
+
+    {
+        let mut num = m.lock().unwrap();
+        *num = 6;
+    }
+
+    println!("M is {:?}", m);
+
+    // Using mutual exclusion in multiple threads.
+
+    // let counter = Mutex::new(0);
+
+    // let mut handles = vec![];
+
+    // for _ in 0..10 {
+    //     let handle = thread::spawn(move || {
+    //         let mut num = counter.lock().unwrap();
+
+    //         *num += 1;
+    //     });
+    //     handles.push(handle);
+    // }
+
+    // for handle in handles {
+    //     handle.join().unwrap();
+    // }
+
+    // println!("Result: {}", *counter.lock().unwrap());
+
+    // Code above is not compiled yet, because counter variable is moved.
+    // Remember the ownership system.
+
+    // let counter = Mutex::new(0);
+    // let mut handles = vec![];
+
+    // let handle = thread::spawn(move || {
+    //     let mut num = counter.lock().unwrap();
+
+    //     *num += 1;
+    // });
+    // handles.push(handle);
+
+    // let handle2 = thread::spawn(move || {
+    //     let mut num2 = counter.lock().unwrap();
+
+    //     *num2 += 1;
+    // });
+    // handles.push(handle2);
+
+    // for handle in handles {
+    //     handle.join().unwrap();
+    // }
+    // println!("Result: {}", *counter.lock().unwrap());
+
+    // Using Rc now like in multiple ownership.
+
+    let counter = Arc::new(Mutex::new(0));
+
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num += 1;
+        });
+
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
 }

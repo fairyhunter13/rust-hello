@@ -32,16 +32,29 @@ fn main() {
 
     screen.run();
 
+    // Old test using state pattern
+    // let mut post = Post::new();
+
+    // post.add_text("I ate a salad for lunch today!");
+
+    // assert_eq!("", post.content());
+
+    // post.request_review();
+
+    // assert_eq!("", post.content());
+
+    // post.approve();
+    // assert_eq!("I ate a salad for lunch today!", post.content());
+
+    // New test after encapsulating state and behavior into different types.
+    // Using shadowing in here.
     let mut post = Post::new();
 
-    post.add_text("I ate a salad for lunch today!");
+    post.add_text("I ate a salad for lunch today");
 
-    assert_eq!("", post.content());
+    let post = post.request_review();
 
-    post.request_review();
+    let post = post.approve();
 
-    assert_eq!("", post.content());
-
-    post.approve();
-    assert_eq!("I ate a salad for lunch today!", post.content());
+    assert_eq!("I ate a salad for lunch today", post.content());
 }

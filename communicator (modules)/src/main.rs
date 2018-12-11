@@ -13,6 +13,7 @@ use TrafficLight::*;
 
 fn main() {
     communicator::client::connect();
+    communicator::network::connect();
     communicator::a::series::of::nested_modules();
     of::nested_modules();
     // let red = Red;

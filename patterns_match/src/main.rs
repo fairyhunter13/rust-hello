@@ -293,6 +293,26 @@ fn main() {
         Test::Hello { id: 10...12 } => println!("Found an id in another range."),
         Test::Hello { id } => println!("Found some other id: {}", id),
     }
+
+    // Usig ref and ref mut
+
+    let robot_name = &Some(String::from("Bors"));
+
+    match robot_name {
+        // Wouldn't match in older version of rust.
+        // Some(name) => println!("Found a name: {}", name),
+
+        // Compiler would show error because name is trying to move out the String from Option.
+        // The rules stated that pattern matching below just only borrow string inside the Option.
+        // &Some(name) => println!("Found a name: {}", name),
+
+        // Using ref solves this problem.
+        // Ref borrows the String value inside the Option.
+        &Some(ref name) => println!("Found a name: {}", name),
+        None => (),
+    }
+
+    println!("robot_name is {:#?}", robot_name);
 }
 
 enum Test {

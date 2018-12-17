@@ -1,0 +1,24 @@
+[[package]]
+name = "advanced_functions_closures"
+version = "0.1.0"
+
+[[package]]
+name = "advanced_lifetimes"
+version = "0.1.0"
+
+[[package]]
+name = "advanced_traits"
+version = "0.1.0"
+
+[[package]]
+name = "advanced_types"
+version = "0.1.0"
+
+[[package]]
+name = "macros"
+version = "0.1.0"
+
+[[package]]
+name = "unsafe_rust"
+version = "0.1.0"
+

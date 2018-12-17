@@ -51,3 +51,15 @@ impl<'c, 's> Parser<'c, 's> {
 fn parse_context(context: Context) -> Result<(), &str> {
     Parser { context: &context }.parse()
 }
+
+// Ref defined without lifetime bounds.
+// This code below will produce error when compiled.
+// This is happened because rust doesn't know the real lifetime of T if T contains any references.
+// struct Ref<'a, T>(&'a T);
+
+// The fix below specifies that if T contains any references,
+// the references will live at least as long as Ref.
+struct Ref<'a, T: 'a>(&'a T);
+
+//
+struct StaticRef<T: 'static>(&'static T);

@@ -1,0 +1,10 @@
+[workspace]
+
+members = [
+    "unsafe_rust",
+    "advanced_lifetimes",
+    "advanced_traits",
+    "advanced_types",
+    "advanced_functions_closures",
+    "macros"
+]

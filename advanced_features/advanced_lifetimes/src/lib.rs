@@ -61,5 +61,14 @@ fn parse_context(context: Context) -> Result<(), &str> {
 // the references will live at least as long as Ref.
 struct Ref<'a, T: 'a>(&'a T);
 
-//
+// Adding 'static parameter lifebound to T for specifying that if T contains any references,
+// It must live long as through the entire program.
 struct StaticRef<T: 'static>(&'static T);
+
+pub trait Red {}
+
+pub struct Ball<'a> {
+    pub diameter: &'a i32,
+}
+
+impl<'a> Red for Ball<'a> {}

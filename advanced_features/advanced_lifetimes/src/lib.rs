@@ -1,3 +1,4 @@
+// use std::fmt;
 // Rust expects lifetime parameters for the code below.
 // The reason is we have lifetime related to from Parser to Context
 // and Context to str literal.
@@ -72,3 +73,38 @@ pub struct Ball<'a> {
 }
 
 impl<'a> Red for Ball<'a> {}
+
+// Using 'static lifetime parameter.
+// Default lifetime parameter ellision for trait object:
+// 1. 'static
+// 2. &'a Trait and &'a mut Trait = 'a
+// 3. Single Clause T: 'a = 'a
+// 4. Multiple Clause T: 'a = undefined (specify by yourself)
+pub struct BallTest {
+    pub diameter: &'static i32,
+}
+
+impl Red for BallTest {}
+
+pub struct StrWrap<'a>(&'a str);
+
+// Too verbose and noisy.
+// pub fn foo<'a>(string: &'a str) -> StrWrap<'a> {
+//     StrWrap(string)
+// }
+
+// Using elided lifetimes bound.
+// pub fn foo(string: &str) -> StrWrap<'_> {
+//     StrWrap(string)
+// }
+
+// Automatically elided: no need to add anonymous lifetime.
+pub fn foo(string: &str) -> StrWrap {
+    StrWrap(string)
+}
+
+// verbose
+// impl<'a> fmt::Debug for StrWrap<'a> {
+
+// elided
+// impl fmt::Debug for StrWrap<'_> {

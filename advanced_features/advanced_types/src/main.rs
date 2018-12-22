@@ -11,6 +11,14 @@ fn main() {
     println!("x + y= {}", x + y);
 
     let f: Thunk = Box::new(|| println!("hi"));
+
+    print!("forever ");
+
+    // Forever loop expression can also be inferred as never return.
+    // Except, if there is a break statement.
+    loop {
+        print!("and ever ");
+    }
 }
 
 // These two function takes a long generic parameter type.
@@ -54,3 +62,60 @@ pub trait Write {
 //     fn write_all(&mut self, buf: &[u8]) -> Result<()>;
 //     fn write_fmt(&mut self, fmt: Arguments) -> Result<()>;
 // }
+
+// Diverging function: return never function.
+// Never in diverging function is annotated as "!".
+// There are no concrete values regarding this never "!".
+
+// fn bar() -> ! {
+//     // --snip--
+// }
+
+// For Example:
+// let guess: u32 = match guess.trim().parse() {
+//     Ok(num) => num,
+//     Err(_) => continue,
+// };
+// Match arm can't possibly have two types of values.
+// So, it's only just one type.
+// But, it can infer the "!", so it will pick type other than never.
+// Code below doesn't compiled.
+// let guess = match guess.trim().parse() {
+//     Ok(_) => 5,
+//     Err(_) => "hello",
+// }
+
+// Another example of return  never with panic:
+// impl<T> Option<T> {
+//     pub fn unwrap(self) -> T {
+//         match self {
+//             Some(val) => val,
+//             None => panic!("called `Option::unwrap()` on a `None` value"),
+//         }
+// }
+//     }
+
+// DST or dynamically sized types
+// Types that have dynamic size and unknown at compile time.
+// Generic function in rust always added a special trait (Sized) by rust automatically.
+// For example:
+
+fn generic<T>(t: T) {
+    // --snip--
+}
+
+// Could be treated as this by Rust:
+// fn generic<T: Sized>(t: T) {
+//     // --snip--
+// }
+
+// Relax the restriction:
+// fn generic<T: ?Sized>(t: &T) {
+//     // --snip--
+// }
+
+// str is also treated as DST, because we don't know how much memory string will take at compile time.
+// We use some kind of pointer or smart pointer here, to refer the address and the length of str.
+// We use can use &, Box, Rc.
+// This code below won't compile:
+// let test: str = "Hello, test!";

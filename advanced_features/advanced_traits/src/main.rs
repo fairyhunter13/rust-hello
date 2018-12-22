@@ -106,6 +106,13 @@ impl Display for Point {
 }
 
 // Using the Newtype pattern.
+struct Wrapper(Vec<String>);
+
+impl Display for Wrapper {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
 
 fn main() {
     println!("Hello, world!");
@@ -134,6 +141,10 @@ fn main() {
 
     let point = Point { x: 1, y: 2 };
     point.outline_print();
+
+    // Let's try our Newtype pattern.
+    let w = Wrapper(vec!["hello".to_owned(), "world".to_owned()]);
+    println!("w = {}", w);
 }
 
 // Trait std::ops::Add

@@ -1,10 +1,13 @@
-use std::ops::Add;
+use std::{
+    fmt::{Display, Formatter, Result},
+    ops::Add,
+};
 
-#[derive(Debug, PartialEq)]
-struct Point {
-    x: i32,
-    y: i32,
-}
+// #[derive(Debug, PartialEq)]
+// struct Point {
+//     x: i32,
+//     y: i32,
+// }
 
 impl Add for Point {
     type Output = Point;
@@ -29,13 +32,108 @@ impl Add<Meters> for Millimeters {
     }
 }
 
+trait Pilot {
+    fn fly(&self);
+}
+
+trait Wizard {
+    fn fly(&self);
+}
+
+struct Human;
+
+impl Pilot for Human {
+    fn fly(&self) {
+        println!("This is your captain speaking!");
+    }
+}
+impl Wizard for Human {
+    fn fly(&self) {
+        println!("Up!");
+    }
+}
+
+impl Human {
+    fn fly(&self) {
+        println!("Waving arms furiously!");
+    }
+}
+
+trait Animal {
+    fn baby_name() -> String;
+}
+
+struct Dog;
+
+impl Dog {
+    fn baby_name() -> String {
+        String::from("Spot")
+    }
+}
+
+impl Animal for Dog {
+    fn baby_name() -> String {
+        String::from("puppy")
+    }
+}
+
+// Using supertrait.
+// A trait that depends on another trait.
+// Like, adding trait bound to a trait.
+trait OutlinePrint: Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl OutlinePrint for Point {}
+
+impl Display for Point {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "({},{})", self.x, self.y)
+    }
+}
+
+// Using the Newtype pattern.
+
 fn main() {
     println!("Hello, world!");
 
-    assert_eq!(
-        Point { x: 1, y: 2 } + Point { x: 1, y: 2 },
-        Point { x: 2, y: 4 }
-    );
+    // assert_eq!(
+    //     Point { x: 1, y: 2 } + Point { x: 1, y: 2 },
+    //     Point { x: 2, y: 4 }
+    // );
+
+    let person = Human {};
+    person.fly();
+    // Calling specifically method from implemented trait
+    Pilot::fly(&person);
+    Wizard::fly(&person);
+
+    // Calling associated function need to be full qualified syntax.
+    // We need to call the implemented animal trait. The code below return "Spot".
+    // What we expect is "puppy".
+    println!("A baby dog is called a {}.", Dog::baby_name());
+
+    // Rust doesn't know which implementation to use.
+    // println!("A baby dog is called a {}", Animal::baby_name());
+
+    // Using fully qualified syntax instead.
+    println!("A baby dog is called a {}.", <Dog as Animal>::baby_name());
+
+    let point = Point { x: 1, y: 2 };
+    point.outline_print();
 }
 
 // Trait std::ops::Add

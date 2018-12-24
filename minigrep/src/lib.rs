@@ -1,7 +1,7 @@
 use std::{
     env::{self, Args},
-    error::Error,
     fs,
+    io::Error,
 };
 
 pub struct Config {
@@ -48,7 +48,7 @@ impl Config {
     }
 }
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn run(config: Config) -> Result<(), Error> {
     // let contents =
     //     fs::read_to_string(config.filename).expect("Something wrong when reading the file!");
     let contents = fs::read_to_string(config.filename)?;

@@ -1,0 +1,25 @@
+extern crate hello;
+
+use hello::ThreadPool;
+use std::{net::TcpListener, thread};
+
+fn main() {
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let pool = Threadpool::new(4);
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        // thread::spawn(|| {
+        //     if let Err(err) = hello::handle_connections(stream) {
+        //         println!("Handle connection error: {}", err);
+        //     }
+        // });
+
+        pool.execute(|| {
+            if let Err(err) = hello::handle_connections(stream) {
+                println!("Handle connection error: {}", err);
+            }
+        });
+    }
+}

@@ -87,8 +87,14 @@ impl Worker {
     fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Self {
         let thread = thread::spawn(move || {
             // Using while let is ok, but the lock is released until job.call_box() done.
-            // This is happening because the lifetime of MutexGuard<T> is remained outside the block.
-            // We need that lifetime to end when the job statement ends.
+            // This is happening because the lifetime of MutexGuard<T> in
+            // while expression is remained in scope for the duration of the block (outside the block).
+            // The lock remains held for the duration of the call to job.call_box(),
+            // meaning other workers cannot receive jobs.
+            // It is also interpreted as other workers (threads) can't acquire the lock.
+            // We need the lifetime of MutexGuard<T> to end when the let job statement ends.
+            // The lock is received when calling recv(), but it is released before the call to
+            // job.call_box().
             // It is more optimized to use loop one.
             // Best serve for concurrency.
 

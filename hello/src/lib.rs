@@ -36,9 +36,14 @@ pub fn handle_connections(mut stream: TcpStream) -> Result<()> {
     Ok(())
 }
 
+enum Message {
+    NewJob(Job),
+    Terminate,
+}
+
 pub struct ThreadPool {
     workers: Vec<Worker>,
-    sender: mpsc::Sender<Job>,
+    sender: mpsc::Sender<Message>,
 }
 
 trait FnBox {
@@ -55,7 +60,14 @@ impl<F: FnOnce()> FnBox for F {
 type Job = Box<dyn FnBox + Send + 'static>;
 
 impl ThreadPool {
-    pub fn new(size: usize) -> Self {
+    /// Create a new ThreadPool.
+    ///
+    /// The size is the number of threads in the pool.
+    ///
+    /// # Panics
+    ///
+    /// The `new` function will panic if the size is zero.
+    pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
         let (sender, receiver) = mpsc::channel();
@@ -68,23 +80,43 @@ impl ThreadPool {
             workers.push(Worker::new(id, Arc::clone(&receiver)));
         }
 
-        Self { workers, sender }
+        ThreadPool { workers, sender }
     }
 
     pub fn execute<F: FnOnce() + Send + 'static>(&self, f: F) {
         let job = Box::new(f);
 
-        self.sender.send(job).unwrap();
+        self.sender.send(Message::NewJob(job)).unwrap();
+    }
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        println!("Sending terminate message to all workers.");
+
+        for _ in &self.workers {
+            self.sender.send(Message::Terminate).unwrap();
+        }
+
+        println!("Shutting down all workers.");
+
+        for worker in &mut self.workers {
+            println!("Shutting down worker {}", worker.id);
+
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
     }
 }
 
 struct Worker {
     id: usize,
-    thread: JoinHandle<()>,
+    thread: Option<JoinHandle<()>>,
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Self {
+    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Self {
         let thread = thread::spawn(move || {
             // Using while let is ok, but the lock is released until job.call_box() done.
             // This is happening because the lifetime of MutexGuard<T> in
@@ -104,13 +136,22 @@ impl Worker {
             //     job.call_box();
             // }
             loop {
-                let job = receiver.lock().unwrap().recv().unwrap();
-
-                println!("Worker {} got a job, executing.", id);
-
-                job.call_box();
+                let message = receiver.lock().unwrap().recv().unwrap();
+                match message {
+                    Message::NewJob(job) => {
+                        println!("Worker {} got job, executing.", id);
+                        job.call_box();
+                    }
+                    Message::Terminate => {
+                        println!("Worker {} was told to terminate.", id);
+                        break;
+                    }
+                }
             }
         });
-        Self { id, thread }
+        Self {
+            id: id,
+            thread: Some(thread),
+        }
     }
 }
